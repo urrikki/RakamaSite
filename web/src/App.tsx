@@ -9,6 +9,7 @@ import Quiz from "./pages/Quiz";
 import Events from "./pages/Events";
 import Profile from "./pages/Profile";
 import Styles from "./pages/Styles";
+import Feed from "./pages/Feed";
 
 export default function App() {
   const { me, loading } = useStore();
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/events" element={<Events />} />
         <Route path="/styles" element={<Styles />} />
+        <Route path="/fil" element={<Feed />} />
         <Route path="/profil" element={<Profile />} />
         <Route path="/profil/:playerId" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" />} />
@@ -78,6 +80,7 @@ function Nav() {
           Événements
           {evPacks > 0 && <span className="dot" />}
         </NavLink>
+        <NavLink to="/fil">Le fil</NavLink>
         <NavLink to="/profil">Profil</NavLink>
       </div>
       <div className="nav-spacer" />

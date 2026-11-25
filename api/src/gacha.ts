@@ -11,7 +11,7 @@ import {
   type Rarity,
 } from "./config.ts";
 import { animeTitleOf, getCharPage, type AniChar } from "./anilist.ts";
-import { db, deleteCards, getUser, insertCard, newUid, tx, type CardRow } from "./db.ts";
+import { db, deleteCards, getUser, insertCard, isFeedWorthy, logActivity, newUid, tx, type CardRow } from "./db.ts";
 import { settle } from "./points.ts";
 import { eventById, unlockedDays } from "./events.ts";
 
@@ -178,6 +178,7 @@ function processFusion(userId: string): FusionResult[] {
         if (!Number.isFinite(card.fav_rank)) card.fav_rank = null;
         deleteCards(fused.map((c) => c.uid));
         insertCard(card);
+        logActivity(userId, "fusion", card, { from: source, count: rule.count });
         // La vitrine suit la nouvelle carte
         const sc = showcaseOf(userId);
         const fusedUids = new Set(fused.map((c) => c.uid));
@@ -236,7 +237,10 @@ export async function openPacks(userId: string, count: number): Promise<OpenResu
         const gotUr = cards.some((c) => c.rarity === "UR");
         pity = gotUr ? 0 : pity + 1;
         tx(() => {
-          for (const c of cards) insertCard(c);
+          for (const c of cards) {
+            insertCard(c);
+            if (isFeedWorthy(c)) logActivity(userId, "pull", c);
+          }
           db.prepare(
             "UPDATE users SET pity = ?, packs_opened = packs_opened + 1, cards_pulled = cards_pulled + ? WHERE id = ?",
           ).run(pity, cards.length, userId);
@@ -270,7 +274,10 @@ async function resolveRecycleAndFusion(userId: string, result: OpenResult) {
       const { cards } = await rollPack(userId, null);
       for (const c of cards) c.origin = "recycle";
       tx(() => {
-        for (const c of cards) insertCard(c);
+        for (const c of cards) {
+          insertCard(c);
+          if (isFeedWorthy(c)) logActivity(userId, "pull", c);
+        }
         db.prepare("UPDATE users SET cards_pulled = cards_pulled + ? WHERE id = ?").run(cards.length, userId);
       });
       result.packs.push({ type: "bonus", bonusFrom: rarity, pity: false, cards });
@@ -303,7 +310,10 @@ export async function openEventPacks(userId: string, eventId: string, count: num
     const picks = await Promise.all(Array.from({ length: n }, () => pickCharacter(PAGE_BANDS_EVENT)));
     const cards = picks.map((p) => makeCard(userId, p, { kind: "event", event_id: eventId, origin: "event" }));
     tx(() => {
-      for (const c of cards) insertCard(c);
+      for (const c of cards) {
+        insertCard(c);
+        if (isFeedWorthy(c)) logActivity(userId, "event", c);
+      }
       db.prepare(
         `INSERT INTO event_claims (user_id, event_id, opened) VALUES (?, ?, ?)
          ON CONFLICT(user_id, event_id) DO UPDATE SET opened = opened + excluded.opened`,

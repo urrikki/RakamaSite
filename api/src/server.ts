@@ -157,6 +157,25 @@ app.get("/api/game/players/:id", (c) => {
   return c.json({ user: publicUserOut(u), cards: getCards(u.id).map(cardOut) });
 });
 
+// ── Fil commun des cartes rares
+app.get("/api/game/feed", (c) => {
+  const limit = Math.min(200, Math.max(1, Number(c.req.query("limit") ?? 60)));
+  const names = new Map(listUsers().map((u) => [u.id, u.display_name]));
+  const rows = db.prepare("SELECT * FROM activity ORDER BY at DESC, id DESC LIMIT ?").all(limit) as {
+    id: number;
+    user_id: string;
+    type: string;
+    data: string;
+    at: number;
+  }[];
+  return c.json(
+    rows.map((r) => {
+      const d = JSON.parse(r.data) as { card: CardRow; from?: string; count?: number };
+      return { id: r.id, userId: r.user_id, userName: names.get(r.user_id) ?? r.user_id, type: r.type, at: r.at, card: cardOut(d.card), from: d.from, count: d.count };
+    }),
+  );
+});
+
 // ── Packs
 app.post("/api/game/packs/open", async (c) => {
   const id = c.get("userId");

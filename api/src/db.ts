@@ -64,6 +64,15 @@ CREATE TABLE IF NOT EXISTS quiz_days (
   data      TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS activity (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id  TEXT NOT NULL REFERENCES users(id),
+  type     TEXT NOT NULL,             -- pull | fusion | event
+  data     TEXT NOT NULL,             -- instantane de la carte (JSON)
+  at       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS activity_at ON activity(at);
+
 CREATE TABLE IF NOT EXISTS quiz_progress (
   user_id   TEXT NOT NULL REFERENCES users(id),
   day       TEXT NOT NULL,
@@ -146,6 +155,26 @@ export function insertCard(c: CardRow) {
 export function deleteCards(uids: string[]) {
   const stmt = db.prepare("DELETE FROM cards WHERE uid = ?");
   for (const u of uids) stmt.run(u);
+}
+
+// ── Fil commun : on garde une copie de la carte, meme si elle est recyclee ou fusionnee ensuite
+export const FEED_RARITIES = new Set(["SSR", "UR", "MYTH"]);
+export const FEED_EVENT_MAX_RANK = 500;
+
+export function logActivity(userId: string, type: "pull" | "fusion" | "event", card: CardRow, extra: Record<string, unknown> = {}) {
+  db.prepare("INSERT INTO activity (user_id, type, data, at) VALUES (?, ?, ?, ?)").run(
+    userId,
+    type,
+    JSON.stringify({ card, ...extra }),
+    card.obtained_at ?? Date.now(),
+  );
+}
+
+/** Une carte merite d'apparaitre dans le fil commun ? */
+export function isFeedWorthy(c: CardRow): boolean {
+  if (c.kind === "normal") return !!c.rarity && FEED_RARITIES.has(c.rarity);
+  if (c.kind === "event") return (c.fav_rank ?? Infinity) <= FEED_EVENT_MAX_RANK;
+  return false;
 }
 
 export function newUid(charId: number): string {

@@ -6,7 +6,10 @@ import { Pack, NORMAL_PACK } from "../components/Pack";
 import Opening, { type OpeningMode } from "../components/Opening";
 import { eventTheme } from "../eventThemes";
 import { Motif } from "../components/motifs";
+import { useFeed, feedText, timeAgo } from "./Feed";
+import { Card } from "../components/Card";
 import "./shop.css";
+import "./feed.css";
 
 function fmt(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -20,6 +23,7 @@ export default function Shop() {
   const { me, rules } = useStore();
   const { data: ev } = useEvents();
   const [opening, setOpening] = useState<OpeningMode | null>(null);
+  const feed = useFeed(8);
   if (!me || !rules) return null;
 
   const canOpen = Math.floor(me.points / rules.packCost);
@@ -143,6 +147,28 @@ export default function Shop() {
                 </button>
               );
             })}
+          </div>
+        </section>
+      )}
+
+      {feed && feed.length > 0 && (
+        <section className="luck">
+          <div className="luck-head">
+            <h3 className="section-title">Derniers coups de chance</h3>
+            <Link to="/fil" className="muted">
+              Tout le fil →
+            </Link>
+          </div>
+          <div className="luck-row">
+            {feed.map((e) => (
+              <div key={e.id} className="luck-item">
+                <Card card={e.card} width={140} lite />
+                <span>
+                  <b>{e.userName}</b> {feedText(e).replace(/ :$/, "")}
+                </span>
+                <span className="muted">{timeAgo(e.at)}</span>
+              </div>
+            ))}
           </div>
         </section>
       )}
