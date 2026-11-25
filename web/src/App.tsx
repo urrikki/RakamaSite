@@ -92,7 +92,7 @@ function Nav() {
         <span className="coin">✦</span>
         <span>{me.points.toLocaleString("fr-FR")}</span>
         <small>
-          = {packs} pack{packs > 1 ? "s" : ""}
+          {packs} pack{packs > 1 ? "s" : ""}
         </small>
       </div>
     </nav>

@@ -42,13 +42,9 @@ export default function Shop() {
   return (
     <div className="page shop">
       <section className="shop-hero">
-        <span className="shop-jp" aria-hidden>
-          パック
-        </span>
         <div className="shop-pack-stage">
           <div className="shop-pack-halo" />
-          <div className="shop-pack-ring" />
-          <Pack look={NORMAL_PACK} width={270} className="shop-pack" />
+                    <Pack look={NORMAL_PACK} width={270} className="shop-pack" />
           <div className="shop-pack-shadow" />
         </div>
 
@@ -59,7 +55,7 @@ export default function Shop() {
               <span className="coin big">✦</span>
               {me.points.toLocaleString("fr-FR")}
               <span className="shop-points-packs">
-                = {canOpen} pack{canOpen > 1 ? "s" : ""}
+                soit {canOpen} pack{canOpen > 1 ? "s" : ""}
               </span>
             </div>
             <div className="shop-bar">
@@ -118,13 +114,10 @@ export default function Shop() {
           />
         )}
         <Link to="/quiz" className="shop-tile quiz-tile panel">
-          <span className="tile-jp" aria-hidden>
-            クイズ
-          </span>
           <div className="kicker">Quiz du jour</div>
           <div className="tile-title">Devine l'anime</div>
           <p className="muted">Trouve-le dès le 1er indice pour gagner jusqu'à 100 points, soit 1 pack.</p>
-          <span className="tile-link">Jouer →</span>
+          <span className="tile-link">Jouer au quiz</span>
         </Link>
         <div className="shop-tile panel rules-tile">
           <div className="kicker">Mécaniques</div>
@@ -199,7 +192,7 @@ export default function Shop() {
           <div className="luck-head">
             <div className="kicker">Derniers coups de chance</div>
             <Link to="/fil" className="tile-link">
-              Tout le fil →
+              Voir tout le fil
             </Link>
           </div>
           <div className="luck-row">

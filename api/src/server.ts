@@ -140,7 +140,7 @@ app.patch("/api/me", async (c) => {
   }
   if (body.showcase !== undefined) {
     const owned = new Set(getCards(id).map((c) => c.uid));
-    const sc = [...new Set(body.showcase)].filter((u) => owned.has(u)).slice(0, 6);
+    const sc = [...new Set(body.showcase)].filter((u) => owned.has(u)).slice(0, 4);
     db.prepare("UPDATE users SET showcase = ? WHERE id = ?").run(JSON.stringify(sc), id);
   }
   if (body.password !== undefined) {

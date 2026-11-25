@@ -375,13 +375,9 @@ function Synopsis({ text }: { text: string }) {
     <p className="hint-synopsis">
       {parts.map((p, i) =>
         p === "▇▇▇▇" ? (
-          <span key={i} className="mask mask-title" title="Titre masqué">
-            titre
-          </span>
+          <span key={i} className="mask mask-title" title="Titre masqué">titre</span>
         ) : p === "▒▒▒" ? (
-          <span key={i} className="mask mask-name" title="Nom de personnage masqué">
-            perso
-          </span>
+          <span key={i} className="mask mask-name" title="Nom de personnage masqué">perso</span>
         ) : (
           p
         ),

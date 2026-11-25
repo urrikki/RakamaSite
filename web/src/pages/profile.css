@@ -1,165 +1,245 @@
-.page-head.pf-head {
-  justify-content: flex-start;
+/* Profil façon Letterboxd : identité, top 4, dernière ouverture, répartition.
+   Pas de boîtes : les sections sont posées sur la page, ouvertes par un titre et un filet. */
+
+.pf-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 24px;
-}
-.pf-head .title {
-  margin-top: 0;
+  gap: 28px;
+  padding-bottom: 36px;
 }
 .pf-avatar {
-  width: 86px;
-  height: 86px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   font-family: var(--f-display);
-  font-weight: 900;
-  font-size: 40px;
-  color: #fff;
+  font-weight: 800;
+  font-size: 44px;
+  color: var(--accent-ink);
   background: var(--accent);
-  box-shadow:
-    0 0 0 4px var(--bg),
-    0 0 0 5px var(--line-2),
-    0 14px 40px -10px rgba(255, 90, 54, 0.7);
 }
-.pf-id {
-  flex: 1;
-}
-.pf-pen {
-  margin-left: 12px;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 22px;
-  vertical-align: middle;
+.pf-name {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -0.035em;
 }
 .pf-edit {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
-.pf-players {
+.pf-edit .input {
+  width: 260px;
+  font-size: 18px;
+}
+.pf-switch {
   display: flex;
-  gap: 8px;
+  gap: 18px;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 15px;
 }
-.pf-players .chip {
+.pf-switch a {
+  color: var(--muted);
   text-decoration: none;
 }
-
-.pf-showcase {
-  position: relative;
-  margin: 40px 0 10px;
-  padding: 50px 20px 70px;
-  border-radius: 28px;
-  background:
-    radial-gradient(ellipse at 50% 120%, rgba(255, 211, 107, 0.22), transparent 60%),
-    radial-gradient(ellipse at 50% -20%, rgba(255, 90, 54, 0.25), transparent 60%),
-    linear-gradient(180deg, rgba(20, 16, 40, 0.8), rgba(8, 6, 16, 0.9));
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 211, 107, 0.25),
-    inset 0 -40px 80px -40px rgba(255, 211, 107, 0.25);
-  overflow: hidden;
+.pf-switch a:hover {
+  color: var(--text);
 }
-.pf-showcase::after {
-  /* etagere */
-  content: "";
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: 46px;
-  height: 10px;
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(255, 211, 107, 0.55), rgba(120, 80, 20, 0.6));
-  box-shadow: 0 10px 30px rgba(255, 211, 107, 0.25);
+.pf-switch a.on {
+  color: var(--text);
+  font-weight: 700;
 }
-.pf-showcase-stage {
-  display: flex;
-  justify-content: center;
-  gap: 22px;
-  perspective: 1400px;
-}
-.pf-slot {
-  position: relative;
-  z-index: 1;
-  animation: slot-in 0.6s cubic-bezier(0.2, 1.2, 0.3, 1) both;
-}
-.pf-slot.s0 { animation-delay: 0.05s; }
-.pf-slot.s1 { animation-delay: 0.1s; }
-.pf-slot.s2 { animation-delay: 0.15s; }
-.pf-slot.s3 { animation-delay: 0.2s; }
-.pf-slot.s4 { animation-delay: 0.25s; }
-.pf-slot.s5 { animation-delay: 0.3s; }
-@keyframes slot-in {
-  from {
-    opacity: 0;
-    transform: translateY(40px) rotateX(30deg);
-  }
-}
-.pf-empty {
-  width: 200px;
-  aspect-ratio: 63 / 88;
-  border-radius: 18px;
-  border: 2px dashed rgba(255, 255, 255, 0.12);
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 20px;
-  font-size: 13px;
+.pf-rename {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 14px;
   color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line-2);
 }
-.pf-showcase-label {
-  position: absolute;
-  left: 50%;
-  bottom: 14px;
-  transform: translateX(-50%);
-  font-family: var(--f-display);
-  font-weight: 800;
-  letter-spacing: 0.4em;
-  font-size: 13px;
-  color: var(--gold);
+.pf-rename:hover {
+  color: var(--text);
 }
 
-.pf-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
-  margin-top: 24px;
-}
-.pf-stat {
-  padding: 16px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 16%, transparent), rgba(255, 255, 255, 0.02));
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 40%, transparent);
+.pf-counts {
   display: flex;
-  flex-direction: column;
+  margin: 0;
 }
-.pf-stat.wide {
-  grid-column: span 2;
+.pf-counts > div {
+  padding: 0 26px;
+  text-align: center;
+  border-left: 1px solid var(--line-2);
 }
-.pf-stat-n {
-  font-family: var(--f-mono);
+.pf-counts > div:first-child {
+  border-left: 0;
+}
+.pf-counts dd {
+  margin: 0;
+  font-family: var(--f-display);
   font-weight: 700;
   font-size: 30px;
-  color: var(--c);
+  letter-spacing: -0.02em;
 }
-.pf-stat-l {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.pf-counts dt {
+  font-size: 13px;
   color: var(--muted);
 }
-.pf-links {
-  margin: 24px 0;
+
+/* ── Sections ── */
+.pf-section {
+  margin-top: 44px;
 }
-.pf-settings {
-  padding: 22px;
+.pf-section-head {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line-2);
+}
+.pf-section-head h2 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+.pf-section-head .muted {
+  font-size: 14px;
+}
+.pf-inline-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.pf-inline-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Top 4 : quatre emplacements de même taille */
+.pf-top4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  justify-items: center;
+}
+.pf-top-slot {
+  width: 262px;
+}
+.pf-empty {
+  width: 262px;
+  aspect-ratio: 63 / 88;
+  border-radius: 14px;
+  border: 1px dashed var(--line-2);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+a.pf-empty:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* Dernière ouverture : une rangée qu'on fait défiler */
+.pf-recent {
+  display: flex;
   gap: 14px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+}
+.pf-recent > * {
+  flex: none;
+}
+.pf-none {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Répartition : histogramme des raretés + quelques chiffres */
+.pf-dist {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: end;
+}
+.pf-histo {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  height: 220px;
+}
+.pf-bar {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: end;
+  justify-items: center;
+  gap: 8px;
+  min-height: 0;
+}
+.pf-bar-n {
+  font-weight: 700;
+  font-size: 15px;
+}
+.pf-bar-fill {
+  display: block;
+  width: 100%;
+  align-self: end;
+  border-radius: 3px 3px 0 0;
+  background: var(--c);
+  opacity: 0.9;
+}
+.pf-bar-r {
+  width: 100%;
+  padding-top: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c);
+  border-top: 1px solid var(--line-2);
+}
+.pf-side {
+  margin: 0;
+}
+.pf-side > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+}
+.pf-side dt {
+  color: var(--muted);
+}
+.pf-side dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.pf-account {
+  margin-top: 64px;
 }
 .pf-row {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+.pf-row .input {
+  width: 260px;
 }

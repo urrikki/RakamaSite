@@ -70,11 +70,11 @@ export default function CardModal({
   const toggleShowcase = async () => {
     if (!me) return;
     const next = inShowcase ? me.showcase.filter((u) => u !== card.uid) : [...me.showcase, card.uid];
-    if (next.length > 6) return toast("La vitrine est pleine (6 cartes max).", true);
+    if (next.length > 4) return toast("Ton top 4 est plein. Retires-en une d’abord.", true);
     try {
       const r = await api<{ user: typeof me }>("/me", { method: "PATCH", body: { showcase: next } });
       setMe(r.user);
-      toast(inShowcase ? "Retirée de la vitrine" : "Ajoutée à la vitrine ✦");
+      toast(inShowcase ? "Retirée du top 4" : "Ajoutée au top 4");
     } catch (e) {
       toast((e as Error).message, true);
     }
@@ -155,7 +155,7 @@ export default function CardModal({
                 {card.favorite ? "★ Favorite" : "☆ Favori"}
               </button>
               <button className={`btn ${inShowcase ? "" : "ghost"}`} onClick={toggleShowcase}>
-                {inShowcase ? "✦ En vitrine" : "Mettre en vitrine"}
+                {inShowcase ? "Retirer du top 4" : "Mettre dans le top 4"}
               </button>
               {card.kind === "event" && (
                 <button className="btn danger" onClick={grind} disabled={card.favorite}>
