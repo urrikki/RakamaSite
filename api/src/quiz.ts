@@ -1,5 +1,5 @@
 import { db, tx } from "./db.ts";
-import { randomPopularAnime, type AniAnime } from "./anilist.ts";
+import { randomPopularAnime, quizExtra, type AniAnime, type QuizExtra } from "./anilist.ts";
 import { parisDay } from "./events.ts";
 import { QUIZ_POINTS, QUIZ_TRIES_PER_STAGE } from "./config.ts";
 import { addPoints } from "./points.ts";
@@ -13,11 +13,37 @@ import { GameError } from "./gacha.ts";
 
 const STAGES = 4;
 
-const dayLocks = new Map<string, Promise<AniAnime>>();
+export type QuizAnime = AniAnime & { extra?: QuizExtra };
 
-export async function animeOfDay(day = parisDay()): Promise<AniAnime> {
+const dayLocks = new Map<string, Promise<QuizAnime>>();
+const extraLocks = new Map<string, Promise<QuizAnime>>();
+
+/** Ajoute (une seule fois) le synopsis long et les noms des persos a l'anime du jour. */
+async function withExtra(day: string, a: QuizAnime): Promise<QuizAnime> {
+  if (a.extra) return a;
+  if (!extraLocks.has(day)) {
+    extraLocks.set(
+      day,
+      (async () => {
+        try {
+          const extra = await quizExtra(a.id);
+          const full = { ...a, extra };
+          db.prepare("UPDATE quiz_days SET data = ? WHERE day = ?").run(JSON.stringify(full), day);
+          return full;
+        } catch {
+          return a; // on reessaiera au prochain appel
+        } finally {
+          extraLocks.delete(day);
+        }
+      })(),
+    );
+  }
+  return extraLocks.get(day)!;
+}
+
+export async function animeOfDay(day = parisDay()): Promise<QuizAnime> {
   const row = db.prepare("SELECT data FROM quiz_days WHERE day = ?").get(day) as { data: string } | undefined;
-  if (row) return JSON.parse(row.data);
+  if (row) return withExtra(day, JSON.parse(row.data));
   if (!dayLocks.has(day)) {
     dayLocks.set(
       day,
@@ -32,7 +58,7 @@ export async function animeOfDay(day = parisDay()): Promise<AniAnime> {
             anime.id,
             JSON.stringify(anime),
           );
-          return anime;
+          return await withExtra(day, anime);
         } finally {
           dayLocks.delete(day);
         }
@@ -66,27 +92,89 @@ function saveProgress(userId: string, day: string, p: Progress) {
   ).run(userId, day, p.stage, p.wrong, p.status, p.points, JSON.stringify(p.guesses));
 }
 
-// ── Nettoyage du synopsis : on retire les titres
-function cleanSynopsis(desc: string | null, a: AniAnime): string {
-  let d = (desc ?? "Aucun synopsis.")
+// ── Nettoyage du synopsis : on prend le plus long (MAL ou AniList),
+// on masque les titres (▇▇▇▇) et les noms des persos (▒▒▒)
+const TITLE_MASK = "▇▇▇▇";
+const NAME_MASK = "▒▒▒";
+
+function stripMarkup(desc: string | null | undefined): string {
+  return (desc ?? "")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<[^>]+>/g, "")
-    .replace(/\(Source:.*?\)/gi, "")
+    .replace(/\[Written by MAL Rewrite\]/gi, "")
+    .replace(/\((Source|Sources)\s*:.*?\)/gi, "")
+    .replace(/^\s*(Source|Note)\s*:.*$/gim, "")
+    .replace(/\r/g, "")
+    // Listes d'episodes speciaux, notes de fin : on coupe tout ce qui suit
+    .replace(/\n\s*[*(]?\s*(This includes|Includes|Notes?\b|Episode \d+ is)[\s\S]*$/i, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+/** Regex « mot entier » qui marche aussi avec les lettres accentuees. */
+function wordRe(w: string, flags: string) {
+  return new RegExp(`(?<![\\p{L}\\p{N}])${escapeRe(w)}(?![\\p{L}\\p{N}])`, flags + "u");
+}
+
+export function cleanSynopsis(a: QuizAnime): string {
+  const ani = stripMarkup(a.description);
+  const mal = stripMarkup(a.extra?.longSynopsis);
+  let d = (mal.length > ani.length ? mal : ani) || "Aucun synopsis.";
+
+  // Titres : phrase entiere puis chaque mot distinctif (insensible a la casse)
   const titles = [a.title.romaji, a.title.english, a.title.native, ...a.synonyms].filter(Boolean) as string[];
+  titles.sort((x, y) => y.length - x.length);
   for (const t of titles) {
-    d = d.replace(new RegExp(escapeRe(t), "gi"), "▇▇▇▇");
-    for (const w of t.split(/\s+/)) {
-      if (w.length > 3 && !COMMON_WORDS.has(w.toLowerCase())) {
-        d = d.replace(new RegExp(`\\b${escapeRe(w)}\\b`, "gi"), "▇▇▇▇");
-      }
+    // Titres courts (« OP », « AoT ») : casse exacte, sinon on masque des bouts de mots
+    if (t.length >= 2) d = d.replace(wordRe(t, t.length <= 4 ? "g" : "gi"), TITLE_MASK);
+  }
+  for (const t of titles) {
+    for (const w of t.split(/[\s:!?.,\-–—()[\]'"]+/)) {
+      if (w.length > 3 && !COMMON_WORDS.has(w.toLowerCase())) d = d.replace(wordRe(w, "gi"), TITLE_MASK);
     }
   }
-  return d.length > 1400 ? d.slice(0, 1397) + "…" : d;
+
+  // Noms des persos : noms complets puis chaque morceau. Sensible a la casse,
+  // pour ne pas masquer « light » quand le perso s'appelle Light.
+  const parts = new Set<string>();
+  for (const n of a.extra?.charNames ?? []) {
+    parts.add(n);
+    for (const w of n.split(/[\s.·・"()]+/)) parts.add(w);
+  }
+  // On ne garde que les morceaux qui ressemblent a un nom propre : majuscule
+  // (ou ecriture japonaise), pas un mot anglais courant. Un nom d'une seule
+  // lettre (ex. « L ») est masque seulement si c'est le nom complet du perso.
+  const whole = new Set(a.extra?.charNames ?? []);
+  const looksLikeName = (w: string) =>
+    (/^\p{Lu}/u.test(w) || /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(w)) &&
+    // « Light » (Death Note) est un mot courant mais aussi un prenom complet : on le masque
+    (whole.has(w) || !NAME_STOP.has(w.toLowerCase()));
+  const sorted = [...parts]
+    .filter((w) => (w.length >= 2 || (whole.has(w) && /^\p{Lu}$/u.test(w))) && looksLikeName(w))
+    .sort((x, y) => y.length - x.length);
+  for (const w of sorted) {
+    d = d.replace(wordRe(w, "g"), NAME_MASK);
+    if (w.length > 2) d = d.replace(wordRe(w.toUpperCase(), "g"), NAME_MASK);
+  }
+  // « ▒▒▒ ▒▒▒ » -> « ▒▒▒ » pour ne pas trahir la longueur des noms
+  d = d.replace(new RegExp(`${NAME_MASK}(?:[\\s.]+${NAME_MASK})+`, "g"), NAME_MASK);
+  d = d.replace(new RegExp(`${TITLE_MASK}(?:[\\s:]+${TITLE_MASK})+`, "g"), TITLE_MASK);
+
+  return d.length > 2600 ? d.slice(0, 2597) + "…" : d;
 }
 
 const COMMON_WORDS = new Set(["with", "from", "that", "this", "have", "season", "part", "the", "and", "your", "into", "world"]);
+// Morceaux de noms qu'on ne masque pas (titres, mots trop courants)
+const NAME_STOP = new Set(
+  (
+    "the of no mr mrs ms dr sir king queen lord lady god man girl boy he she it in on to an as at by is or be do if so " +
+    "up we me my jr sr a and for from with his her their its one two three first second last new old young little big " +
+    "great grand dark light black white red blue green gold golden silver iron steel blood death life world sea sky " +
+    "fire water wind earth star moon sun day night time captain commander general master miss mister doctor professor " +
+    "teacher father mother brother sister uncle aunt prince princess emperor empress hero demon devil angel ghost " +
+    "monster beast dragon knight witch saint pirate ninja samurai detective police student school club team"
+  ).split(" "),
+);
 
 function escapeRe(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -116,7 +204,7 @@ function isCorrect(a: AniAnime, guess: { id?: number; titles: string[] }): boole
 }
 
 // ── Etat envoye au client : on ne revele que les indices debloques
-function view(a: AniAnime, p: Progress) {
+function view(a: QuizAnime, p: Progress) {
   const finished = p.status !== "playing";
   const stage = finished ? STAGES : p.stage;
   const studios = a.studios.nodes.filter((s) => s.isAnimationStudio).map((s) => s.name);
@@ -146,7 +234,7 @@ function view(a: AniAnime, p: Progress) {
         popularity: a.popularity,
         score: a.averageScore,
       },
-      synopsis: stage >= 2 ? cleanSynopsis(a.description, a) : null,
+      synopsis: stage >= 2 ? cleanSynopsis(a) : null,
       coverBlurred: stage === 3 && !finished ? a.coverImage.extraLarge ?? a.coverImage.large : null,
       cover: stage >= 4 ? a.coverImage.extraLarge ?? a.coverImage.large : null,
       firstLetter: stage >= 4 ? (a.title.english ?? a.title.romaji).trim()[0]?.toUpperCase() ?? null : null,

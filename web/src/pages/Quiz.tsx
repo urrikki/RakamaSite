@@ -3,6 +3,7 @@ import { api, searchAnime, type AnimeSuggestion } from "../api";
 import { useStore } from "../store";
 import { toast } from "../toast";
 import { Bursts, type BurstsHandle } from "../components/Bursts";
+import { PageHead } from "../components/PageHead";
 import "./quiz.css";
 
 interface QuizState {
@@ -151,11 +152,11 @@ export default function Quiz() {
 
   return (
     <div className="page quiz" style={{ "--qa": accent } as React.CSSProperties}>
-      <header className="quiz-head">
-        <div>
-          <div className="tile-kicker">Quiz du {new Date(s.day + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</div>
-          <h1 className="title">Devine l'anime</h1>
-        </div>
+      <PageHead
+        kicker={`Quiz du ${new Date(s.day + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}`}
+        title="Devine l'anime"
+        jp="クイズ"
+      >
         <div className="quiz-steps">
           {s.pointsTable.map((p, i) => (
             <div key={i} className={`quiz-step ${i + 1 < stage ? "past" : i + 1 === stage && !done ? "now" : ""} ${done && s.status === "won" && i + 1 === s.guesses.at(-1)?.stage ? "won" : ""}`}>
@@ -165,7 +166,7 @@ export default function Quiz() {
             </div>
           ))}
         </div>
-      </header>
+      </PageHead>
 
       {done && s.answer && (
         <section className={`quiz-result ${s.status}`}>
@@ -255,7 +256,7 @@ export default function Quiz() {
 
           <div className={`hint-card ${stage >= 2 ? "revealed" : "locked"}`}>
             <div className="hint-label">Indice 2 · Synopsis</div>
-            {stage >= 2 ? <p className="hint-synopsis">{s.hints.synopsis}</p> : <Locked />}
+            {stage >= 2 ? <Synopsis text={s.hints.synopsis ?? ""} /> : <Locked />}
           </div>
 
           <div className={`hint-card hint-cover ${stage >= 3 ? "revealed" : "locked"}`}>
@@ -364,5 +365,27 @@ function Locked() {
       <span>🔒</span>
       <span className="muted">Se débloque si tu passes à l'indice suivant ou après 3 erreurs</span>
     </div>
+  );
+}
+
+/** Synopsis : les titres (▇▇▇▇) et les noms de persos (▒▒▒) sont masqués côté serveur. */
+function Synopsis({ text }: { text: string }) {
+  const parts = text.split(/(▇▇▇▇|▒▒▒)/);
+  return (
+    <p className="hint-synopsis">
+      {parts.map((p, i) =>
+        p === "▇▇▇▇" ? (
+          <span key={i} className="mask mask-title" title="Titre masqué">
+            titre
+          </span>
+        ) : p === "▒▒▒" ? (
+          <span key={i} className="mask mask-name" title="Nom de personnage masqué">
+            perso
+          </span>
+        ) : (
+          p
+        ),
+      )}
+    </p>
   );
 }

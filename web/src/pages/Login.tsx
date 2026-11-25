@@ -60,7 +60,10 @@ export default function Login() {
         ))}
       </div>
       <form className="login-box panel" onSubmit={submit}>
-        <div className="logo login-logo">RAKAMA</div>
+        <div className="logo login-logo">
+          <span className="logo-seal">ラ</span>
+          <span className="logo-word">RAKAMA</span>
+        </div>
         <p className="muted">Gacha · Guess anime</p>
         <div className="login-accounts">
           {accounts.map((a) => (
@@ -77,7 +80,7 @@ export default function Login() {
             {!acc?.hasPassword && (
               <input className="input" placeholder="Code d'installation" value={setupCode} onChange={(e) => setSetupCode(e.target.value)} />
             )}
-            <button className="btn gold" disabled={busy || !password}>
+            <button className="btn" disabled={busy || !password}>
               {busy ? "…" : "Entrer"}
             </button>
           </>

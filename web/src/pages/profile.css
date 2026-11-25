@@ -1,7 +1,10 @@
-.pf-head {
-  display: flex;
+.page-head.pf-head {
+  justify-content: flex-start;
   align-items: center;
-  gap: 22px;
+  gap: 24px;
+}
+.pf-head .title {
+  margin-top: 0;
 }
 .pf-avatar {
   width: 86px;
@@ -9,14 +12,15 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-family: "Cinzel", serif;
+  font-family: var(--f-display);
   font-weight: 900;
   font-size: 40px;
-  background: conic-gradient(from 140deg, #8b5cff, #ff4fa3, #ffd36b, #8b5cff);
+  color: #fff;
+  background: var(--accent);
   box-shadow:
-    0 0 0 4px #07060d,
-    0 0 0 6px rgba(255, 211, 107, 0.6),
-    0 0 40px rgba(139, 92, 255, 0.6);
+    0 0 0 4px var(--bg),
+    0 0 0 5px var(--line-2),
+    0 14px 40px -10px rgba(255, 90, 54, 0.7);
 }
 .pf-id {
   flex: 1;
@@ -49,7 +53,7 @@
   border-radius: 28px;
   background:
     radial-gradient(ellipse at 50% 120%, rgba(255, 211, 107, 0.22), transparent 60%),
-    radial-gradient(ellipse at 50% -20%, rgba(139, 92, 255, 0.25), transparent 60%),
+    radial-gradient(ellipse at 50% -20%, rgba(255, 90, 54, 0.25), transparent 60%),
     linear-gradient(180deg, rgba(20, 16, 40, 0.8), rgba(8, 6, 16, 0.9));
   box-shadow:
     inset 0 0 0 1px rgba(255, 211, 107, 0.25),
@@ -108,7 +112,7 @@
   left: 50%;
   bottom: 14px;
   transform: translateX(-50%);
-  font-family: "Cinzel", serif;
+  font-family: var(--f-display);
   font-weight: 800;
   letter-spacing: 0.4em;
   font-size: 13px;
@@ -133,7 +137,7 @@
   grid-column: span 2;
 }
 .pf-stat-n {
-  font-family: "Space Grotesk";
+  font-family: var(--f-mono);
   font-weight: 700;
   font-size: 30px;
   color: var(--c);

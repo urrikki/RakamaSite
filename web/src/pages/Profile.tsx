@@ -65,7 +65,10 @@ export default function Profile() {
 
   return (
     <div className="page profile">
-      <header className="pf-head">
+      <header className="page-head pf-head">
+        <span className="page-head-jp" aria-hidden>
+          プロフィール
+        </span>
         <div className="pf-avatar">{displayName?.[0] ?? "?"}</div>
         <div className="pf-id">
           {isMine && editName ? (

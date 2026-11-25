@@ -68,7 +68,8 @@ function Nav() {
   return (
     <nav className="nav">
       <Link to="/" className="logo">
-        RAKAMA
+        <span className="logo-seal">ラ</span>
+        <span className="logo-word">RAKAMA</span>
       </Link>
       <div className="nav-links">
         <NavLink to="/" end>
@@ -84,6 +85,9 @@ function Nav() {
         <NavLink to="/profil">Profil</NavLink>
       </div>
       <div className="nav-spacer" />
+      <Link to="/profil" className="nav-user">
+        {me.name}
+      </Link>
       <div className="points-pill" title={`+1 point dans ${mins} min`}>
         <span className="coin">✦</span>
         <span>{me.points.toLocaleString("fr-FR")}</span>

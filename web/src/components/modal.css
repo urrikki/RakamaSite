@@ -63,7 +63,7 @@
   text-transform: uppercase;
 }
 .modal-name {
-  font-family: "Cinzel", serif;
+  font-family: var(--f-display);
   font-weight: 900;
   font-size: 38px;
   line-height: 1.05;
@@ -102,7 +102,7 @@
   flex-direction: column;
 }
 .modal-stats dd small {
-  font-family: "Sora";
+  font-family: var(--f-body);
   font-size: 12px;
   font-weight: 400;
   color: var(--muted);

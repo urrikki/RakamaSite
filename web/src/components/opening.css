@@ -45,7 +45,7 @@
   padding: 22px 32px;
 }
 .opening-counter {
-  font-family: "Cinzel", serif;
+  font-family: var(--f-display);
   font-weight: 800;
   font-size: 18px;
   letter-spacing: 0.08em;
@@ -54,7 +54,7 @@
   align-items: center;
 }
 .tag {
-  font-family: "Sora", sans-serif;
+  font-family: var(--f-body);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;

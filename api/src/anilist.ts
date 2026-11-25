@@ -168,3 +168,88 @@ export async function randomPopularAnime(excludeIds: Set<number>): Promise<AniAn
   }
   throw new Error("Aucun anime disponible pour le quiz");
 }
+
+// ─────────────────────────────────────────────
+// Quiz : synopsis long (MyAnimeList via Jikan) + noms des persos a masquer
+// ─────────────────────────────────────────────
+
+export interface QuizExtra {
+  idMal: number | null;
+  /** Synopsis le plus long trouve (MAL, sinon AniList). */
+  longSynopsis: string | null;
+  /** Prenoms, noms, surnoms des persos de l'anime. */
+  charNames: string[];
+}
+
+const EXTRA_QUERY = `
+query ($id: Int, $page: Int) {
+  Media(id: $id) {
+    idMal
+    characters(sort: [ROLE, RELEVANCE, ID], perPage: 25, page: $page) {
+      pageInfo { hasNextPage }
+      nodes { name { first middle last full native alternative userPreferred } }
+    }
+  }
+}`;
+
+type ExtraName = {
+  first: string | null;
+  middle: string | null;
+  last: string | null;
+  full: string | null;
+  native: string | null;
+  alternative: string[] | null;
+  userPreferred: string | null;
+};
+
+export async function quizExtra(animeId: number): Promise<QuizExtra> {
+  const names = new Set<string>();
+  let idMal: number | null = null;
+  for (let page = 1; page <= 3; page++) {
+    const d = await anilist<{
+      Media: { idMal: number | null; characters: { pageInfo: { hasNextPage: boolean }; nodes: { name: ExtraName }[] } };
+    }>(EXTRA_QUERY, { id: animeId, page });
+    idMal = d.Media.idMal;
+    for (const { name } of d.Media.characters.nodes) {
+      for (const n of [name.first, name.middle, name.last, name.full, name.native, name.userPreferred, ...(name.alternative ?? [])]) {
+        if (n && n.trim()) names.add(n.trim());
+      }
+    }
+    if (!d.Media.characters.pageInfo.hasNextPage) break;
+  }
+  let longSynopsis: string | null = null;
+  if (idMal) {
+    // MAL (via Jikan) et Kitsu en parallele : on garde le texte le plus long
+    const found = await Promise.all([jikanSynopsis(idMal), kitsuSynopsis(idMal)]);
+    longSynopsis = found.filter((s): s is string => !!s).sort((a, b) => b.length - a.length)[0] ?? null;
+  }
+  return { idMal, longSynopsis, charNames: [...names] };
+}
+
+async function jikanSynopsis(idMal: number): Promise<string | null> {
+  try {
+    const res = await fetch(`https://api.jikan.moe/v4/anime/${idMal}`, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const j = (await res.json()) as { data?: { synopsis?: string | null } };
+    return j.data?.synopsis ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function kitsuSynopsis(idMal: number): Promise<string | null> {
+  try {
+    const url =
+      "https://kitsu.io/api/edge/mappings?filter%5BexternalSite%5D=myanimelist/anime" +
+      `&filter%5BexternalId%5D=${idMal}&include=item`;
+    const res = await fetch(url, {
+      headers: { Accept: "application/vnd.api+json" },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return null;
+    const j = (await res.json()) as { included?: { type: string; attributes?: { synopsis?: string | null } }[] };
+    return j.included?.find((i) => i.type === "anime")?.attributes?.synopsis ?? null;
+  } catch {
+    return null;
+  }
+}

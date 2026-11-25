@@ -5,6 +5,7 @@ import { useStore } from "../store";
 import { Card } from "../components/Card";
 import CardModal from "../components/CardModal";
 import { RARITY_META, rarityRank, type Card as CardT } from "../types";
+import { PageHead } from "../components/PageHead";
 import "./collection.css";
 
 type Filter = "all" | "MYTH" | "UR" | "SSR" | "SR" | "R" | "C" | "event" | "legacy" | "fav";
@@ -79,13 +80,11 @@ export default function Collection() {
 
   return (
     <div className="page collection">
-      <header className="col-head">
-        <div>
-          <h1 className="title">{isMine ? "Ma collection" : `Collection de ${other?.name ?? "…"}`}</h1>
-          <p className="subtitle">
-            {cards.length} cartes · {uniqueChars} personnages différents
-          </p>
-        </div>
+      <PageHead
+        kicker={`${cards.length} cartes · ${uniqueChars} persos différents`}
+        title={isMine ? "Ma collection" : `Collection de ${other?.name ?? "…"}`}
+        jp="コレクション"
+      >
         <div className="col-players">
           {players.map((p) => (
             <Link key={p.id} to={p.id === me?.id ? "/collection" : `/collection/${p.id}`} className={`chip ${(p.id === me?.id ? isMine : p.id === playerId) ? "on" : ""}`}>
@@ -93,7 +92,7 @@ export default function Collection() {
             </Link>
           ))}
         </div>
-      </header>
+      </PageHead>
 
       <div className="col-toolbar">
         <div className="col-filters">

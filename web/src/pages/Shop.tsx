@@ -20,6 +20,8 @@ function fmt(ms: number) {
   return h ? `${h}h ${String(m).padStart(2, "0")}min` : `${m}min ${String(sec).padStart(2, "0")}s`;
 }
 
+const RATE_COLS = ["UR", "SSR", "SR", "R", "C"] as const;
+
 export default function Shop() {
   const { me, rules } = useStore();
   const { data: ev } = useEvents();
@@ -40,18 +42,25 @@ export default function Shop() {
   return (
     <div className="page shop">
       <section className="shop-hero">
+        <span className="shop-jp" aria-hidden>
+          パック
+        </span>
         <div className="shop-pack-stage">
-          <div className="shop-pack-glow" />
-          <Pack look={NORMAL_PACK} width={290} className="shop-pack" />
+          <div className="shop-pack-halo" />
+          <div className="shop-pack-ring" />
+          <Pack look={NORMAL_PACK} width={270} className="shop-pack" />
           <div className="shop-pack-shadow" />
         </div>
 
         <div className="shop-panel">
           <div className="shop-points">
-            <div className="shop-points-label">Tes points</div>
+            <div className="kicker">Tes points</div>
             <div className="shop-points-value">
               <span className="coin big">✦</span>
               {me.points.toLocaleString("fr-FR")}
+              <span className="shop-points-packs">
+                = {canOpen} pack{canOpen > 1 ? "s" : ""}
+              </span>
             </div>
             <div className="shop-bar">
               <div className="shop-bar-fill" style={{ width: `${progress * 100}%` }} />
@@ -65,7 +74,7 @@ export default function Shop() {
           </div>
 
           <div className="shop-open">
-            <div className="shop-open-title">Ouvrir des packs</div>
+            <div className="kicker">Ouvrir des packs · {rules.packCost} pts l'unité</div>
             <div className="shop-open-grid">
               {choices.map((n) => (
                 <button key={n} className="shop-qty" disabled={n > canOpen} onClick={() => setOpening({ kind: "normal", count: n })}>
@@ -73,12 +82,8 @@ export default function Shop() {
                   <span className="shop-qty-cost">{n * rules.packCost} pts</span>
                 </button>
               ))}
-              <button
-                className="shop-qty max"
-                disabled={maxN < 1}
-                onClick={() => setOpening({ kind: "normal", count: maxN })}
-              >
-                <span className="shop-qty-n">MAX ×{maxN}</span>
+              <button className="shop-qty max" disabled={maxN < 1} onClick={() => setOpening({ kind: "normal", count: maxN })}>
+                <span className="shop-qty-n">Max ×{maxN}</span>
                 <span className="shop-qty-cost">{maxN * rules.packCost} pts</span>
               </button>
             </div>
@@ -86,9 +91,9 @@ export default function Shop() {
 
           <div className="shop-pity">
             <div className="shop-pity-head">
-              <span>Pity UR</span>
+              <span className="kicker">Pity UR</span>
               <span className="mono">
-                {me.pity} / {rules.pityThreshold}
+                <b>{me.pity}</b> / {rules.pityThreshold}
               </span>
             </div>
             <div className="shop-pity-pips">
@@ -96,7 +101,7 @@ export default function Shop() {
                 <i key={i} className={i < me.pity ? "on" : ""} />
               ))}
             </div>
-            <div className="muted small">Une UR est garantie après {rules.pityThreshold} packs sans UR.</div>
+            <div className="muted small">UR garantie en 5e carte après {rules.pityThreshold} packs sans UR.</div>
           </div>
         </div>
       </section>
@@ -113,35 +118,43 @@ export default function Shop() {
           />
         )}
         <Link to="/quiz" className="shop-tile quiz-tile panel">
-          <div className="tile-kicker">Quiz du jour</div>
+          <span className="tile-jp" aria-hidden>
+            クイズ
+          </span>
+          <div className="kicker">Quiz du jour</div>
           <div className="tile-title">Devine l'anime</div>
           <p className="muted">Trouve-le dès le 1er indice pour gagner jusqu'à 100 points, soit 1 pack.</p>
-          <span className="btn sm">Jouer →</span>
+          <span className="tile-link">Jouer →</span>
         </Link>
         <div className="shop-tile panel rules-tile">
-          <div className="tile-kicker">Mécaniques</div>
-          <ul>
-            <li>
-              <b>Recyclage</b> : {rules.recycle.C} C, {rules.recycle.R} R ou {rules.recycle.SR} SR → 1 pack bonus
-            </li>
-            <li>
-              <b>Fusion</b> : 3× la même SSR → UR · 2× la même UR → MYTH
-            </li>
-            <li>
-              <b>Favoris</b> : jamais recyclés
-            </li>
-          </ul>
+          <div className="kicker">Mécaniques</div>
+          <dl className="rules-list">
+            <div>
+              <dt>Recyclage</dt>
+              <dd>
+                {rules.recycle.C} C, {rules.recycle.R} R ou {rules.recycle.SR} SR → 1 pack bonus
+              </dd>
+            </div>
+            <div>
+              <dt>Fusion</dt>
+              <dd>3× la même SSR → UR · 2× la même UR → MYTH</dd>
+            </div>
+            <div>
+              <dt>Favoris</dt>
+              <dd>Jamais recyclés ni fusionnés</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
       <section className="rates panel">
-        <h3 className="section-title">Taux de tirage par carte</h3>
-        <p className="muted small">Les chances montent carte après carte. Une UR ne peut sortir qu'en 4e ou 5e carte, et la carte du pity est toujours la 5e.</p>
+        <div className="kicker">Taux de tirage par carte</div>
+        <p className="muted small">Les chances montent carte après carte. Une UR ne peut sortir qu'en 4e ou 5e carte.</p>
         <table className="rates-table">
           <thead>
             <tr>
               <th />
-              {(["UR", "SSR", "SR", "R", "C"] as const).map((r) => (
+              {RATE_COLS.map((r) => (
                 <th key={r} style={{ color: RARITY_META[r].color }}>
                   {r}
                 </th>
@@ -152,7 +165,7 @@ export default function Shop() {
             {Object.entries(rules.slotRates).map(([slot, rates]) => (
               <tr key={slot}>
                 <td>Carte {Number(slot) + 1}</td>
-                {(["UR", "SSR", "SR", "R", "C"] as const).map((r) => (
+                {RATE_COLS.map((r) => (
                   <td key={r} className={rates[r] ? "" : "zero"}>
                     {rates[r] ? `${rates[r].toLocaleString("fr-FR")} %` : "—"}
                   </td>
@@ -165,7 +178,7 @@ export default function Shop() {
 
       {pendingEvents.length > 0 && (
         <section className="shop-pending">
-          <h3 className="section-title">Packs d'événements en attente</h3>
+          <div className="kicker">Packs d'événements en attente</div>
           <div className="pending-list">
             {pendingEvents.map((e) => {
               const t = eventTheme(e.id);
@@ -184,8 +197,8 @@ export default function Shop() {
       {feed && feed.length > 0 && (
         <section className="luck">
           <div className="luck-head">
-            <h3 className="section-title">Derniers coups de chance</h3>
-            <Link to="/fil" className="muted">
+            <div className="kicker">Derniers coups de chance</div>
+            <Link to="/fil" className="tile-link">
               Tout le fil →
             </Link>
           </div>
@@ -231,7 +244,7 @@ function EventTile({
           <Motif key={i} name={m} size={30 + (i % 3) * 14} className={`et-m et-m${i}`} />
         ))}
       </div>
-      <div className="tile-kicker">Événement de la semaine</div>
+      <div className="kicker">Événement de la semaine</div>
       <div className="tile-title">{name}</div>
       <p className="muted">{blurb}</p>
       <div className="event-days">

@@ -4,6 +4,7 @@ import { Card } from "../components/Card";
 import CardModal from "../components/CardModal";
 import { eventName } from "../eventNames";
 import { RARITY_META, type Card as CardT } from "../types";
+import { PageHead } from "../components/PageHead";
 import "./feed.css";
 
 export interface FeedEntry {
@@ -70,8 +71,12 @@ export default function Feed() {
 
   return (
     <div className="page feed">
-      <h1 className="title">Le fil</h1>
-      <p className="subtitle">Les SSR, UR, MYTH, les fusions et les gros persos d'événement tirés par chacun.</p>
+      <PageHead
+        kicker="Pot commun"
+        title="Le fil"
+        jp="タイムライン"
+        sub="Les SSR, UR, MYTH, les fusions et les gros persos d'événement tirés par chacun."
+      />
       {!feed ? (
         <div className="spinner" style={{ marginTop: 40 }} />
       ) : feed.length === 0 ? (

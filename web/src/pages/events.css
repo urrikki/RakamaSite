@@ -50,7 +50,7 @@
   gap: 12px;
 }
 .ev-title {
-  font-family: "Cinzel", serif;
+  font-family: var(--f-display);
   font-weight: 900;
   font-size: 56px;
   line-height: 1.05;
@@ -63,7 +63,7 @@
 .ev-blurb {
   margin: 0;
   font-size: 17px;
-  color: #e7e2f8;
+  color: var(--text-2);
 }
 .ev-days {
   display: flex;

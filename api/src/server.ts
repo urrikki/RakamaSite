@@ -6,7 +6,7 @@ import { hashPassword, signToken, verifyPassword, verifyToken } from "./auth.ts"
 import { pointsOf } from "./points.ts";
 import { GameError, eventPacksAvailable, grindCards, openEventPacks, openPacks } from "./gacha.ts";
 import { EVENTS, currentEvent, endOf, parisDay, unlockedDays } from "./events.ts";
-import { quizGuess, quizSkip, quizState } from "./quiz.ts";
+import { animeOfDay, quizGuess, quizSkip, quizState } from "./quiz.ts";
 import {
   FUSION_RULES,
   GRIND_EVENT_POINTS,
@@ -278,6 +278,8 @@ serve({ fetch: app.fetch, port }, () => {
 
 // Prechauffe le cache des persos (pages 1-80) pour que les ouvertures soient instantanees
 async function warmCharPages() {
+  // Le quiz du jour d'abord (synopsis long + noms des persos), avant la file AniList du cache
+  await animeOfDay().catch((e) => console.warn(`[warm] quiz : ${(e as Error).message}`));
   for (let page = 1; page <= 80; page++) {
     try {
       await getCharPage(page);

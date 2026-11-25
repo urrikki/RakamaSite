@@ -16,10 +16,10 @@ export interface PackLook {
 }
 
 export const NORMAL_PACK: PackLook = {
-  a: "#8b5cff",
-  b: "#ffd36b",
-  deep: "#140a33",
-  glow: "#c4a8ff",
+  a: "#ff5a36",
+  b: "#f2c14e",
+  deep: "#1c0c08",
+  glow: "#ff9a6e",
   title: "RAKAMA",
   subtitle: "5 cartes · Anime",
   motif: "sparkle",

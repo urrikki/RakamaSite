@@ -1,47 +1,41 @@
-.col-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 20px;
-}
 .col-players {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 .col-players .chip {
   text-decoration: none;
 }
 .col-toolbar {
   position: sticky;
-  top: 66px;
+  top: 64px;
   z-index: 20;
-  margin: 24px -12px 26px;
-  padding: 14px 12px;
+  margin: -30px -32px 28px;
+  padding: 16px 32px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: linear-gradient(180deg, rgba(7, 6, 13, 0.9), rgba(7, 6, 13, 0.7));
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
+  background: rgba(11, 10, 14, 0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
 }
 .col-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 .chip:disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: default;
 }
 .chip-dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  box-shadow: 0 0 6px currentColor;
+  border-radius: 2px;
+  transform: rotate(45deg);
 }
 .col-search {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 .col-search .input:first-child {
   flex: 1;
@@ -49,7 +43,7 @@
 .col-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
-  gap: 26px 18px;
+  gap: 30px 18px;
   justify-items: center;
 }
 .col-cell {
@@ -57,7 +51,9 @@
   animation: cell-in 0.4s ease-out both;
 }
 .col-cell .tcg {
-  transition: transform 0.25s, filter 0.25s;
+  transition:
+    transform 0.25s,
+    filter 0.25s;
 }
 .col-cell:hover .tcg {
   transform: translateY(-6px) scale(1.03);
@@ -79,10 +75,12 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 14px;
-  color: #2b1800;
-  background: radial-gradient(circle at 35% 30%, #fff6cf, #ffd36b 50%, #c8912b);
-  box-shadow: 0 0 10px rgba(255, 211, 107, 0.7);
+  font-size: 13px;
+  color: #3a2500;
+  background: var(--gold);
+  box-shadow:
+    0 0 0 3px var(--bg),
+    0 4px 10px rgba(0, 0, 0, 0.5);
 }
 .col-empty {
   padding: 80px;
