@@ -162,7 +162,11 @@ export async function randomPopularAnime(excludeIds: Set<number>): Promise<AniAn
     const page = 1 + Math.floor(Math.random() * lastPage);
     const data = page === 1 ? first : await anilist<typeof first>(q, { page });
     const pool = data.Page.media.filter(
-      (m) => !excludeIds.has(m.id) && !m.tags.some((t) => t.name.toLowerCase() === "hentai"),
+      (m) =>
+        !excludeIds.has(m.id) &&
+        !m.tags.some((t) => t.name.toLowerCase() === "hentai") &&
+        // Il faut un vrai synopsis pour l'indice 2
+        (m.description ?? "").replace(/<[^>]+>/g, "").length >= 350,
     );
     if (pool.length) return pool[Math.floor(Math.random() * pool.length)];
   }
