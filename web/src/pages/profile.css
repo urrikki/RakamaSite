@@ -1,0 +1,161 @@
+.pf-head {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.pf-avatar {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: "Cinzel", serif;
+  font-weight: 900;
+  font-size: 40px;
+  background: conic-gradient(from 140deg, #8b5cff, #ff4fa3, #ffd36b, #8b5cff);
+  box-shadow:
+    0 0 0 4px #07060d,
+    0 0 0 6px rgba(255, 211, 107, 0.6),
+    0 0 40px rgba(139, 92, 255, 0.6);
+}
+.pf-id {
+  flex: 1;
+}
+.pf-pen {
+  margin-left: 12px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 22px;
+  vertical-align: middle;
+}
+.pf-edit {
+  display: flex;
+  gap: 8px;
+}
+.pf-players {
+  display: flex;
+  gap: 8px;
+}
+.pf-players .chip {
+  text-decoration: none;
+}
+
+.pf-showcase {
+  position: relative;
+  margin: 40px 0 10px;
+  padding: 50px 20px 70px;
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(255, 211, 107, 0.22), transparent 60%),
+    radial-gradient(ellipse at 50% -20%, rgba(139, 92, 255, 0.25), transparent 60%),
+    linear-gradient(180deg, rgba(20, 16, 40, 0.8), rgba(8, 6, 16, 0.9));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 211, 107, 0.25),
+    inset 0 -40px 80px -40px rgba(255, 211, 107, 0.25);
+  overflow: hidden;
+}
+.pf-showcase::after {
+  /* etagere */
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 46px;
+  height: 10px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(255, 211, 107, 0.55), rgba(120, 80, 20, 0.6));
+  box-shadow: 0 10px 30px rgba(255, 211, 107, 0.25);
+}
+.pf-showcase-stage {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  perspective: 1400px;
+}
+.pf-slot {
+  position: relative;
+  z-index: 1;
+  animation: slot-in 0.6s cubic-bezier(0.2, 1.2, 0.3, 1) both;
+}
+.pf-slot.s0 { animation-delay: 0.05s; }
+.pf-slot.s1 { animation-delay: 0.1s; }
+.pf-slot.s2 { animation-delay: 0.15s; }
+.pf-slot.s3 { animation-delay: 0.2s; }
+.pf-slot.s4 { animation-delay: 0.25s; }
+.pf-slot.s5 { animation-delay: 0.3s; }
+@keyframes slot-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px) rotateX(30deg);
+  }
+}
+.pf-empty {
+  width: 200px;
+  aspect-ratio: 63 / 88;
+  border-radius: 18px;
+  border: 2px dashed rgba(255, 255, 255, 0.12);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.pf-showcase-label {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  letter-spacing: 0.4em;
+  font-size: 13px;
+  color: var(--gold);
+}
+
+.pf-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.pf-stat {
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 16%, transparent), rgba(255, 255, 255, 0.02));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 40%, transparent);
+  display: flex;
+  flex-direction: column;
+}
+.pf-stat.wide {
+  grid-column: span 2;
+}
+.pf-stat-n {
+  font-family: "Space Grotesk";
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--c);
+}
+.pf-stat-l {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pf-links {
+  margin: 24px 0;
+}
+.pf-settings {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pf-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

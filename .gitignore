@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+
+# Donnees privees : base locale et export du bot Discord (ne jamais publier)
+api/data/
+data_import/
+*.sqlite
+*.sqlite-*
+.claude/
+*.tsbuildinfo

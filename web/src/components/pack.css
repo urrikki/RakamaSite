@@ -1,0 +1,177 @@
+.pack {
+  --prx: 0deg;
+  --pry: 0deg;
+  --pmx: 50%;
+  --pmy: 30%;
+  width: var(--pw);
+  aspect-ratio: 0.62;
+  perspective: 1000px;
+  position: relative;
+  font-size: calc(var(--pw) / 20);
+}
+.pack-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--prx)) rotateY(var(--pry));
+  transition: transform 0.25s ease-out;
+  filter: drop-shadow(0 2em 2.5em rgba(0, 0, 0, 0.6)) drop-shadow(0 0 2em color-mix(in srgb, var(--pglow) 45%, transparent));
+}
+
+.pack-top,
+.pack-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  background: var(--pdeep);
+}
+.pack-top {
+  top: 0;
+  height: 13%;
+  border-radius: 0.4em 0.4em 0 0;
+  z-index: 2;
+  transform-origin: 100% 100%;
+}
+.pack-body {
+  top: 13%;
+  bottom: 0;
+  border-radius: 0 0 0.4em 0.4em;
+}
+
+.pack-foil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at var(--pmx) var(--pmy), rgba(255, 255, 255, 0.45), transparent 40%),
+    repeating-linear-gradient(115deg, transparent 0 0.6em, rgba(255, 255, 255, 0.05) 0.6em 0.7em),
+    conic-gradient(from 200deg at 50% 40%, var(--pa), var(--pdeep), var(--pb), var(--pdeep), var(--pa));
+}
+.pack-top .pack-foil {
+  background:
+    linear-gradient(90deg, var(--pb), var(--pa), var(--pb)),
+    var(--pdeep);
+  opacity: 0.9;
+}
+
+.pack-crimp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.1em;
+  background: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0 0.25em, rgba(255, 255, 255, 0.18) 0.25em 0.5em);
+}
+.pack-crimp.top {
+  top: 0;
+}
+.pack-crimp.bottom {
+  bottom: 0;
+}
+
+.pack-art {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 9em;
+  height: 9em;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+}
+.pack-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 0.15em solid color-mix(in srgb, var(--pb) 80%, transparent);
+  box-shadow:
+    0 0 2em var(--pglow),
+    inset 0 0 2em color-mix(in srgb, var(--pglow) 60%, transparent);
+  animation: pack-pulse 3s ease-in-out infinite;
+}
+.pack-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0.8em;
+  border-radius: 50%;
+  border: 0.06em dashed color-mix(in srgb, var(--pb) 70%, transparent);
+  animation: spin 18s linear infinite;
+}
+.pack-motif {
+  width: 5.5em !important;
+  height: 5.5em !important;
+  color: var(--pb);
+  filter: drop-shadow(0 0 1em var(--pglow));
+}
+@keyframes pack-pulse {
+  50% {
+    transform: scale(1.06);
+    opacity: 0.85;
+  }
+}
+
+.pack-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 56%;
+  text-align: center;
+  font-family: "Cinzel", serif;
+  font-weight: 900;
+  font-size: 2.1em;
+  letter-spacing: 0.18em;
+  background: linear-gradient(100deg, #fff, var(--pb) 40%, #fff 60%, var(--pb));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0.08em 0 rgba(0, 0, 0, 0.6));
+  animation: shimmer 4s linear infinite;
+  padding: 0 0.4em;
+  line-height: 1.1;
+}
+.pack-sub {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 76%;
+  text-align: center;
+  font-size: 0.75em;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+.pack-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.35) 48%, transparent 60%);
+  background-size: 300% 100%;
+  animation: pack-shine 3.6s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+@keyframes pack-shine {
+  0% {
+    background-position: 120% 0;
+  }
+  60%,
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+/* Ligne de dechirure : lumiere qui avance avec --tear */
+.pack-tearline {
+  position: absolute;
+  left: 0;
+  top: 13%;
+  height: 0.25em;
+  width: calc(var(--tear) * 100%);
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, #fff 70%, var(--pglow));
+  box-shadow:
+    0 0 1em #fff,
+    0 0 2.4em var(--pglow);
+  border-radius: 1em;
+  z-index: 3;
+  opacity: calc(var(--tear) * 4);
+}

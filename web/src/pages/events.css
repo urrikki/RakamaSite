@@ -1,0 +1,188 @@
+.ev-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 30px;
+  align-items: center;
+  padding: 40px 50px;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--glow) 35%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--deep), #08060f 70%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--a) 50%, transparent),
+    0 30px 80px -40px var(--a);
+  animation: hint-in 0.6s ease-out;
+}
+.ev-hero-motifs {
+  position: absolute;
+  inset: 0;
+  color: var(--a);
+  opacity: 0.18;
+  pointer-events: none;
+}
+.evh-m {
+  position: absolute;
+  animation: ev-float 7s ease-in-out infinite;
+}
+.evh-m:nth-child(odd) {
+  color: var(--b);
+}
+.evh-m0 { left: 3%; top: 8%; }
+.evh-m1 { left: 18%; top: 78%; animation-delay: -1s; }
+.evh-m2 { left: 35%; top: 6%; animation-delay: -2s; }
+.evh-m3 { left: 48%; top: 86%; animation-delay: -3s; }
+.evh-m4 { left: 58%; top: 14%; animation-delay: -4s; }
+.evh-m5 { left: 92%; top: 10%; animation-delay: -5s; }
+.evh-m6 { left: 88%; top: 80%; animation-delay: -6s; }
+.evh-m7 { left: 7%; top: 46%; animation-delay: -1.5s; }
+.evh-m8 { left: 28%; top: 40%; animation-delay: -2.5s; }
+.evh-m9 { left: 54%; top: 52%; animation-delay: -3.5s; }
+.evh-m10 { left: 74%; top: 60%; animation-delay: -4.5s; }
+.evh-m11 { left: 96%; top: 44%; animation-delay: -5.5s; }
+.evh-m12 { left: 66%; top: 90%; animation-delay: -0.5s; }
+.evh-m13 { left: 40%; top: 66%; animation-delay: -6.5s; }
+.ev-hero-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ev-title {
+  font-family: "Cinzel", serif;
+  font-weight: 900;
+  font-size: 56px;
+  line-height: 1.05;
+  background: linear-gradient(100deg, #fff, var(--a) 45%, var(--b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 30px color-mix(in srgb, var(--glow) 50%, transparent));
+}
+.ev-blurb {
+  margin: 0;
+  font-size: 17px;
+  color: #e7e2f8;
+}
+.ev-days {
+  display: flex;
+  gap: 8px;
+  margin: 6px 0;
+}
+.ev-day {
+  width: 54px;
+  padding: 8px 0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.ev-day.ready {
+  color: #fff;
+  background: color-mix(in srgb, var(--a) 30%, transparent);
+  box-shadow:
+    inset 0 0 0 1px var(--a),
+    0 0 18px -4px var(--a);
+  animation: tell-pulse 1.6s ease-in-out infinite;
+}
+.ev-day.used {
+  color: color-mix(in srgb, var(--a) 60%, #888);
+}
+.ev-actions {
+  display: flex;
+  gap: 10px;
+}
+.ev-hero-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.ev-owned {
+  margin-top: 30px;
+}
+.ev-owned-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 16px 4px 20px;
+}
+
+.ev-calendar {
+  margin-top: 30px;
+}
+.ev-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.ev-tile {
+  position: relative;
+  border: 0;
+  cursor: pointer;
+  padding: 14px 12px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--deep) 90%, transparent), rgba(10, 8, 20, 0.8));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--a) 25%, transparent);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ev-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1px var(--a);
+}
+.ev-tile.past {
+  opacity: 0.6;
+}
+.ev-tile.future {
+  opacity: 0.8;
+}
+.ev-tile.now {
+  box-shadow:
+    inset 0 0 0 2px var(--a),
+    0 0 30px -8px var(--a);
+}
+.ev-tile.sel {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.ev-tile-icon {
+  color: var(--a);
+  filter: drop-shadow(0 0 8px var(--glow));
+}
+.ev-tile-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+.ev-tile-date {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ev-tile-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--deep);
+  background: var(--a);
+  box-shadow: 0 0 10px var(--a);
+}
+.ev-tile-owned {
+  font-size: 11px;
+  color: var(--b);
+}

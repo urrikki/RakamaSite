@@ -1,0 +1,16 @@
+{
+  "name": "rakama-api",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node src/server.ts",
+    "dev": "node --watch src/server.ts",
+    "migrate": "node scripts/migrate.ts",
+    "set-password": "node scripts/set-password.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.0",
+    "hono": "^4.7.0"
+  }
+}

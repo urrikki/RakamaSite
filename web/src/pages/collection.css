@@ -1,0 +1,90 @@
+.col-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+.col-players {
+  display: flex;
+  gap: 8px;
+}
+.col-players .chip {
+  text-decoration: none;
+}
+.col-toolbar {
+  position: sticky;
+  top: 66px;
+  z-index: 20;
+  margin: 24px -12px 26px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(7, 6, 13, 0.9), rgba(7, 6, 13, 0.7));
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+.col-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+}
+.col-search {
+  display: flex;
+  gap: 10px;
+}
+.col-search .input:first-child {
+  flex: 1;
+}
+.col-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  gap: 26px 18px;
+  justify-items: center;
+}
+.col-cell {
+  position: relative;
+  animation: cell-in 0.4s ease-out both;
+}
+.col-cell .tcg {
+  transition: transform 0.25s, filter 0.25s;
+}
+.col-cell:hover .tcg {
+  transform: translateY(-6px) scale(1.03);
+  z-index: 2;
+}
+@keyframes cell-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.col-fav {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  z-index: 5;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: #2b1800;
+  background: radial-gradient(circle at 35% 30%, #fff6cf, #ffd36b 50%, #c8912b);
+  box-shadow: 0 0 10px rgba(255, 211, 107, 0.7);
+}
+.col-empty {
+  padding: 80px;
+  text-align: center;
+}
