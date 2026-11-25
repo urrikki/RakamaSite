@@ -13,11 +13,12 @@ export const CARDS_PER_PACK = 5;
 // Garantie UR apres 13 packs sans UR "naturelle"
 export const PITY_THRESHOLD = 13;
 
-// Probabilites (%) par position dans le pack (style Pokemon TCGP) — identiques au bot
+// Probabilites (%) par position dans le pack (style Pokemon TCGP).
+// Les chances montent carte apres carte ; une UR ne peut sortir qu'en 4e ou 5e carte.
 export const SLOT_RATES: Record<number, Record<Exclude<Rarity, "MYTH">, number>> = {
-  0: { C: 75.0, R: 22.0, SR: 2.5, SSR: 0.4, UR: 0.1 },
-  1: { C: 75.0, R: 22.0, SR: 2.5, SSR: 0.4, UR: 0.1 },
-  2: { C: 70.0, R: 24.0, SR: 5.0, SSR: 0.8, UR: 0.2 },
+  0: { C: 75.1, R: 22.0, SR: 2.5, SSR: 0.4, UR: 0 },
+  1: { C: 75.1, R: 22.0, SR: 2.5, SSR: 0.4, UR: 0 },
+  2: { C: 70.2, R: 24.0, SR: 5.0, SSR: 0.8, UR: 0 },
   3: { C: 50.0, R: 30.0, SR: 15.0, SSR: 4.0, UR: 1.0 },
   4: { C: 28.0, R: 35.0, SR: 27.0, SSR: 8.0, UR: 2.0 },
 };

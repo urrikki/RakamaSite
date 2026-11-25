@@ -4,7 +4,7 @@ import { MIGRATION_STARTING_POINTS } from "./config.ts";
 // Les deux seuls joueurs du site
 export const PLAYERS = [
   { id: "urrikki", discordId: "699703329487454258", name: "Urrikki" },
-  { id: "frere", discordId: "887655483727564830", name: "Sigir" },
+  { id: "frere", discordId: "887655483727564830", name: "Sigeir" },
 ];
 
 export function ensureUsers() {
@@ -15,8 +15,8 @@ export function ensureUsers() {
        VALUES (?, ?, ?, ?, ?, ?)`,
     ).run(p.id, p.discordId, p.name, MIGRATION_STARTING_POINTS, now, now);
   }
-  // Ancien pseudo provisoire
-  db.prepare("UPDATE users SET display_name = 'Sigir' WHERE id = 'frere' AND display_name = 'Frérot'").run();
+  // Anciens pseudos provisoires
+  db.prepare("UPDATE users SET display_name = 'Sigeir' WHERE id = 'frere' AND display_name IN ('Frérot', 'Sigir')").run();
   backfillActivity();
 }
 

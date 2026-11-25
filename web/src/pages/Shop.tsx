@@ -6,6 +6,7 @@ import { Pack, NORMAL_PACK } from "../components/Pack";
 import Opening, { type OpeningMode } from "../components/Opening";
 import { eventTheme } from "../eventThemes";
 import { Motif } from "../components/motifs";
+import { RARITY_META } from "../types";
 import { useFeed, feedText, timeAgo } from "./Feed";
 import { Card } from "../components/Card";
 import "./shop.css";
@@ -131,6 +132,35 @@ export default function Shop() {
             </li>
           </ul>
         </div>
+      </section>
+
+      <section className="rates panel">
+        <h3 className="section-title">Taux de tirage par carte</h3>
+        <p className="muted small">Les chances montent carte après carte. Une UR ne peut sortir qu'en 4e ou 5e carte, et la carte du pity est toujours la 5e.</p>
+        <table className="rates-table">
+          <thead>
+            <tr>
+              <th />
+              {(["UR", "SSR", "SR", "R", "C"] as const).map((r) => (
+                <th key={r} style={{ color: RARITY_META[r].color }}>
+                  {r}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(rules.slotRates).map(([slot, rates]) => (
+              <tr key={slot}>
+                <td>Carte {Number(slot) + 1}</td>
+                {(["UR", "SSR", "SR", "R", "C"] as const).map((r) => (
+                  <td key={r} className={rates[r] ? "" : "zero"}>
+                    {rates[r] ? `${rates[r].toLocaleString("fr-FR")} %` : "—"}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
 
       {pendingEvents.length > 0 && (

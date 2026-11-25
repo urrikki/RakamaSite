@@ -37,6 +37,7 @@ export interface Rules {
   fusion: Partial<Record<Rarity, { count: number; result: Rarity }>>;
   grindEventPoints: number;
   maxPacksPerOpen: number;
+  slotRates: Record<string, Record<string, number>>;
 }
 
 export interface PackResult {

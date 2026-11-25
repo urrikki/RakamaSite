@@ -33,7 +33,7 @@ function rollSlotRarity(slot: number): Rarity {
   let cumul = 0;
   for (const rarity of ["UR", "SSR", "SR", "R", "C"] as const) {
     cumul += rates[rarity];
-    if (r <= cumul) return rarity;
+    if (r < cumul) return rarity;
   }
   return "C";
 }
@@ -98,7 +98,8 @@ function makeCard(userId: string, p: Picked, extra: Partial<CardRow>): CardRow {
 }
 
 async function rollPack(userId: string, pity: number | null): Promise<{ cards: CardRow[]; pitySlot: number | null }> {
-  const pitySlot = pity !== null && pity >= PITY_THRESHOLD ? Math.floor(Math.random() * CARDS_PER_PACK) : null;
+  // La carte garantie par le pity est toujours la derniere du pack
+  const pitySlot = pity !== null && pity >= PITY_THRESHOLD ? CARDS_PER_PACK - 1 : null;
   const picks = await Promise.all(Array.from({ length: CARDS_PER_PACK }, () => pickCharacter(PAGE_BANDS_NORMAL)));
   const cards = picks.map((p, i) => {
     const isPity = i === pitySlot;

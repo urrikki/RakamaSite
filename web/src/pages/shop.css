@@ -296,3 +296,32 @@
     transform: translate(8px, -14px) rotate(8deg);
   }
 }
+
+.rates {
+  margin-top: 24px;
+  padding: 22px 24px;
+}
+.rates p {
+  margin: 6px 0 14px;
+}
+.rates-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+}
+.rates-table th,
+.rates-table td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+.rates-table th:first-child,
+.rates-table td:first-child {
+  text-align: left;
+  font-family: "Sora", sans-serif;
+  color: var(--muted);
+}
+.rates-table td.zero {
+  color: rgba(255, 255, 255, 0.2);
+}

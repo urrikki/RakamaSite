@@ -16,6 +16,7 @@ import {
   PITY_THRESHOLD,
   POINTS_PER_DAY_PASSIVE,
   RECYCLE_THRESHOLDS,
+  SLOT_RATES,
 } from "./config.ts";
 import { ensureUsers } from "./seed.ts";
 import { importDiscord, type DiscordData } from "./importer.ts";
@@ -125,6 +126,7 @@ function rules() {
     fusion: FUSION_RULES,
     grindEventPoints: GRIND_EVENT_POINTS,
     maxPacksPerOpen: MAX_PACKS_PER_OPEN,
+    slotRates: SLOT_RATES,
   };
 }
 
